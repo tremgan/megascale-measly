@@ -65,13 +65,13 @@ def _(mo):
     records = mo.ui.text("data/1UFM.json", label="records JSON", full_width=True)
     rungs = mo.ui.multiselect(
         ["1 one-hot -> ridge", "2 frozen ESM-2 -> ridge", "3 ESM-2 + LoRA"],
-        value=["1 one-hot -> ridge", "2 frozen ESM-2 -> ridge"],
+        value=["1 one-hot -> ridge", "2 frozen ESM-2 -> ridge", "3 ESM-2 + LoRA"],
         label="rungs",
     )
-    draws = mo.ui.slider(2, 100, value=10, label="draws", show_value=True)
+    draws = mo.ui.slider(2, 100, value=100, label="draws", show_value=True)
     steps = mo.ui.slider(25, 500, step=25, value=200, label="LoRA steps/fit",
                          show_value=True)
-    batch = mo.ui.slider(4, 64, step=4, value=8, label="LoRA batch",
+    batch = mo.ui.slider(4, 64, step=4, value=64, label="LoRA batch",
                          show_value=True)
     rank = mo.ui.slider(1, 32, value=8, label="LoRA rank", show_value=True)
     mo.vstack([records, rungs, mo.hstack([draws, steps, batch, rank])])
