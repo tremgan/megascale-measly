@@ -103,16 +103,24 @@ def _(batch, draws, mo, pipeline, rank, records, run, rungs, steps):
               "the LoRA rung is minutes to hours."),
     )
 
-    # molab's sidebar uploads land flat beside the notebook, so "data/x.json"
-    # from a local run will not resolve there.
-    _path = Path(records.value)
-    if not _path.exists():
-        _path = mo.notebook_dir() / _path.name
-    mo.stop(
-        not _path.exists(),
-        mo.md(f"`{records.value}` not found. Upload the records JSON "
-              f"(or run `megascale export --domain 1UFM.pdb`)."),
-    )
+    # A local run says "data/1UFM.json"; molab puts sidebar uploads somewhere
+    # else entirely, so try the usual spots and then say where we looked.
+    _name = Path(records.value).name
+    _roots = [Path.cwd(), mo.notebook_dir()]
+    _tried = [Path(records.value)]
+    _tried += [root / sub / _name for root in _roots for sub in (".", "data")]
+    _path = next((c for c in _tried if c.exists()), None)
+
+    if _path is None:
+        _seen = sorted({str(f) for root in _roots for f in root.glob("*")
+                        if not f.name.startswith(".")})[:20]
+        mo.stop(True, mo.md(
+            f"`{records.value}` not found.\n\n**Looked in:**\n"
+            + "\n".join(f"- `{c}`" for c in dict.fromkeys(_tried))
+            + "\n\n**Files visible to the kernel:**\n"
+            + ("\n".join(f"- `{f}`" for f in _seen) or "- _(none)_")
+            + "\n\nPut the path to one of those in the records box above."))
+
     X, y, wt = pipeline.load(_path)
     _chosen = {r[0] for r in rungs.value}
 
