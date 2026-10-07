@@ -1,6 +1,6 @@
 # megascale-measly
 
-Worked example of the [measly](../measly) workflow on the Tsuboyama et al. (2023)
+Worked example of the [measly](github.com/tremgan/measly) workflow on the Tsuboyama et al. (2023)
 mega-scale protein folding stability dataset.
 
 This repo depends on `measly` as a package. It must never reach into measly's
